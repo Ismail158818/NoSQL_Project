@@ -4,6 +4,8 @@
 .env.*
 storage/*.key
 /public/storage
+!/public/storage/logo
+!/public/storage/logo/logo.png
 /public/hot
 /public/build
 /.idea
