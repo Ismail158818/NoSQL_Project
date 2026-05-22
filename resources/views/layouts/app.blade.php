@@ -14,12 +14,8 @@
 </head>
 <body class="min-vh-100 d-flex flex-column bg-light">
     <div class="position-relative">
-        <img src="{{ asset('storage/logo/logo.png') }}?v={{ time() }}" alt="Ebla Digital Library" style="width:300px; height:200px; position:absolute; left:12px; top:-35px; z-index:1050;" class="shadow-sm">
+        <img src="{{ asset('storage/logo/logo.png') }}?v={{ time() }}" alt="Ebla Digital Library" style="width:30px; height:20px; position:absolute; left:20px; top:10px; z-index:1050;" class="shadow-sm">
         <nav class="navbar navbar-expand-lg navbar-dark bg-success border-bottom border-warning border-3 shadow py-2">
-            <div class="container">
-                <a class="navbar-brand d-flex align-items-center gap-2 py-1" href="{{ route('home') }}" title="Ebla Digital Library">
-                    <img src="{{ asset('storage/logo/logo.png') }}?v={{ time() }}" alt="Ebla Digital Library" height="400" width="300" style="width:300px; height:200px;" class="shadow-sm object-fit-contain">
-                </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -74,7 +70,6 @@
                     @endauth
                 </ul>
             </div>
-                </div>
         </nav>
     </div>
 
