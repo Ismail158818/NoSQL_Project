@@ -23,7 +23,7 @@ class UserController extends Controller
         return view('admin.users', compact('users'));
     }
 
-    // إضافة مستخدم جديد كأبلودر
+    // إضافة مستخدم جديد ك Uploader
     public function Save_User(StoreUserRequest $request): RedirectResponse
     {
         if (Auth::user()->role !== 'Admin') {

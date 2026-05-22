@@ -8,12 +8,10 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    // صفحة تسجيل الدخول / التسجيل
     public function showAuthForm(): View
     {
         return view('auth.auth');
@@ -23,26 +21,30 @@ class AuthController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
 
-        if (! Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
-            return back()->withErrors(['email' => __('auth.failed')]);
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !password_verify($request->password, $user->password)) {
+            return back()->withErrors(['email' => 'The login information is incorrect']);
         }
+
+        Auth::login($user);
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('home'));
+        return redirect()->route('home');
     }
 
     // إنشاء حساب جديد
     public function register(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|confirmed|min:6',
         ]);
 
         $auth = new Fun_Auth;
@@ -50,13 +52,13 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('home'));
+        return redirect()->route('home');
     }
 
     // تسجيل الخروج
     public function logout(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

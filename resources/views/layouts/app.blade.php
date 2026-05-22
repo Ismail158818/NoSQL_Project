@@ -9,20 +9,17 @@
     <link rel="apple-touch-icon" href="{{ asset('storage/logo/logo.png') }}?v={{ time() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        :root {
-            --bs-success: #0e4f29;
-            --bs-success-rgb: 20, 92, 50;
-        }
-    </style>
+  
     @stack('styles')
 </head>
 <body class="min-vh-100 d-flex flex-column bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success border-bottom border-warning border-3 shadow">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('home') }}" title="Ebla Digital Library">
-                <img src="{{ asset('storage/logo/logo.png') }}?v={{ time() }}" alt="Ebla Digital Library" height="52" class="bg-white rounded p-1 shadow-sm object-fit-contain">
-            </a>
+    <div class="position-relative">
+        <img src="{{ asset('storage/logo/logo.png') }}?v={{ time() }}" alt="Ebla Digital Library" style="width:300px; height:200px; position:absolute; left:12px; top:-35px; z-index:1050;" class="shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success border-bottom border-warning border-3 shadow py-2">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center gap-2 py-1" href="{{ route('home') }}" title="Ebla Digital Library">
+                    <img src="{{ asset('storage/logo/logo.png') }}?v={{ time() }}" alt="Ebla Digital Library" height="400" width="300" style="width:300px; height:200px;" class="shadow-sm object-fit-contain">
+                </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -77,8 +74,9 @@
                     @endauth
                 </ul>
             </div>
-        </div>
-    </nav>
+                </div>
+        </nav>
+    </div>
 
     <main class="container py-4 flex-grow-1">
         @if(session('success'))

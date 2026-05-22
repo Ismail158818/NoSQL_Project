@@ -7,7 +7,7 @@
         padding: 30px 0;
         text-align: center;
         margin-bottom: 40px;
-        border-radius: 8px;
+        border-radius: 0;
         position: relative;
         overflow: hidden;
     }

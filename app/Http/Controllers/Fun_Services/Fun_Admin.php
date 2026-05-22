@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Hash;
 
 class Fun_Admin
 {
-    public function list_users_services(): Collection
+    public function list_users_services()
     {
         return User::orderByDesc('created_at')->get();
     }
 
-    public function save_user_services(array $data): User
+    public function save_user_services(array $data)
     {
         return User::create([
             'name' => $data['name'],
@@ -23,7 +23,7 @@ class Fun_Admin
         ]);
     }
 
-    public function assign_uploader_services(User $user): ?string
+    public function assign_uploader_services(User $user)
     {
         if ($user->role === 'Admin') {
             return 'Admin users already have full access.';
@@ -34,7 +34,7 @@ class Fun_Admin
         return null;
     }
 
-    public function assign_reader_services(User $user): ?string
+    public function assign_reader_services(User $user)
     {
         if ($user->role === 'Admin') {
             return 'Admin users cannot be demoted.';
@@ -45,7 +45,7 @@ class Fun_Admin
         return null;
     }
 
-    public function delete_user_services(User $user, string $currentUserId): ?string
+    public function delete_user_services(User $user, string $currentUserId)
     {
         if ($currentUserId === $user->id) {
             return 'You cannot delete your own account from this screen.';

@@ -11,43 +11,81 @@ use Illuminate\Support\Facades\Storage;
 
 class Fun_Library
 {
-    public function browse_items_services(Request $request): array
+    public function browse_items_services(Request $request)
     {
         $items = DigitalItem::query()
             ->with('uploader')
+
+            // Full Text Search 
             ->when($request->query('search'), function ($query, $search) {
-                $query->where(function ($query) use ($search) {
-                    $query->where('title', 'like', "%{$search}%")
-                        ->orWhere('author', 'like', "%{$search}%")
-                        ->orWhere('keywords', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
+                $query->whereRaw([
+                    '$text' => [
+                        '$search' => $search
+                    ]
+                ]);
             })
-            ->when($request->query('keyword'), fn ($query, $keyword) => $query->where('keywords', 'like', '%'.$keyword.'%'))
-            ->when($request->query('type'), fn ($query, $type) => $query->where('file_type', $type))
-            ->when($request->query('category'), fn ($query, $category) => $query->where('category', $category))
-            ->when($request->query('author'), fn ($query, $author) => $query->where('author', 'like', "%{$author}%"))
+
+            // فلترة حسب الكلمات المفتاحية
+            ->when($request->query('keyword'), function ($query, $keyword) {
+                $query->where('keywords', 'like', '%'.$keyword.'%');
+            })
+
+            // فلترة حسب نوع الملف
+            ->when($request->query('type'), function ($query, $type) {
+                $query->where('file_type', $type);
+            })
+
+            // فلترة حسب التصنيف
+            ->when($request->query('category'), function ($query, $category) {
+                $query->where('category', $category);
+            })
+
+            // فلترة حسب المؤلف
+            ->when($request->query('author'), function ($query, $author) {
+                $query->where('author', 'like', "%{$author}%");
+            })
+
             ->orderByDesc('created_at')
             ->paginate(12)
             ->withQueryString();
 
         return [
             'items' => $items,
-            'types' => ['pdf' => 'PDF', 'image' => 'Image', 'audio' => 'Audio'],
+            'types' => [
+                'pdf' => 'PDF',
+                'image' => 'Image',
+                'audio' => 'Audio'
+            ],
             'categories' => DigitalItem::categoryList(),
         ];
     }
 
-    public function save_item_services(array $data, UploadedFile $file, ?UploadedFile $cover = null): DigitalItem
+    public function save_item_services(array $data, UploadedFile $file, ?UploadedFile $cover = null)
     {
         $originalName = $file->getClientOriginalName();
-        $filename = time().'_'.preg_replace('/[^A-Za-z0-9_\-.]/', '_', $originalName);
+
+        $filename = time().'_'.preg_replace(
+            '/[^A-Za-z0-9_\-.]/',
+            '_',
+            $originalName
+        );
+
         $path = $file->storeAs('library', $filename, 'public');
 
         $coverPath = null;
+
         if ($cover) {
-            $coverName = 'cover_'.time().'_'.preg_replace('/[^A-Za-z0-9_\-.]/', '_', $cover->getClientOriginalName());
-            $coverPath = $cover->storeAs('library/covers', $coverName, 'public');
+            $coverName = 'cover_'.time().'_'.preg_replace(
+                '/[^A-Za-z0-9_\-.]/',
+                '_',
+                $cover->getClientOriginalName()
+            );
+
+            $coverPath = $cover->storeAs(
+                'library/covers',
+                $coverName,
+                'public'
+            );
         }
 
         return DigitalItem::create([
@@ -65,7 +103,7 @@ class Fun_Library
         ]);
     }
 
-    public function download_item_services(DigitalItem $item): ?string
+    public function download_item_services(DigitalItem $item)
     {
         $disk = Storage::disk('public');
 
@@ -78,7 +116,7 @@ class Fun_Library
         return $disk->path($item->path);
     }
 
-    public function delete_item_services(DigitalItem $item): void
+    public function delete_item_services(DigitalItem $item)
     {
         $disk = Storage::disk('public');
 
@@ -93,7 +131,7 @@ class Fun_Library
         $item->delete();
     }
 
-    public function touch_login_services(): User
+    public function touch_login_services()
     {
         $user = Auth::user();
 
@@ -101,22 +139,24 @@ class Fun_Library
             abort(403, 'You must be logged in.');
         }
 
-        $user->update(['last_login_at' => now()]);
+        $user->update([
+            'last_login_at' => now()
+        ]);
 
         return $user;
     }
 
-    public function can_upload_services(User $user): bool
+    public function can_upload_services(User $user)
     {
         return in_array($user->role, ['Admin', 'Uploader'], true);
     }
 
-    public function can_download_services(User $user): bool
+    public function can_download_services(User $user)
     {
         return in_array($user->role, ['Admin', 'Uploader', 'Reader'], true);
     }
 
-    private function map_file_type_services(string $extension): string
+    private function map_file_type_services(string $extension)
     {
         return match ($extension) {
             'pdf' => 'pdf',

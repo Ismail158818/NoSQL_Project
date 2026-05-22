@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class LibraryController extends Controller
 {
-    // عرض المكتبة الرئيسية مع الفلاتر
+    // عرض المكتبة الرئيسية
     public function Browse_Items(Request $request)
     {
         $library = new Fun_Library;
@@ -25,7 +25,6 @@ class LibraryController extends Controller
         ]);
     }
 
-    // رفع ملف جديد (أدمن / أبلودر)
     public function Save_Item(StoreLibraryItemRequest $request): RedirectResponse
     {
         if (! Auth::check()) {
@@ -48,7 +47,7 @@ class LibraryController extends Controller
         return redirect()->route('home')->with('success', 'File uploaded successfully.');
     }
 
-    // تحميل ملف (يتطلب تسجيل دخول)
+    // تحميل ملف حيث يطلب تسجيل دخول
     public function Download_Item(DigitalItem $item): RedirectResponse|BinaryFileResponse
     {
         if (! Auth::check()) {

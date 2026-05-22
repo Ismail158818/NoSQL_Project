@@ -9,7 +9,8 @@ class DigitalItem extends Model
     protected $connection = 'mongodb';
 
     /** @return list<string> */
-    public static function categoryList(): array
+    public static function categoryList(): array 
+    
     {
         return [
             'Audio',
