@@ -3,11 +3,12 @@
 .env
 .env.*
 storage/*.key
-/public/storage
-!/public/storage/logo
-!/public/storage/logo/logo.png
 /public/hot
 /public/build
+!/public/storage/logo
+!/public/storage/logo/logo.png
+!/public/storage/developers
+/public/storage
 /.idea
 /.vscode
 .DS_Store
